@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+<meta charset="UTF-8">
+<title>Login / Register</title>
+<style>
+body { font-family: Arial; padding: 40px; background: #f3f3f3; }
+.box { background: #fff; padding: 20px; width: 350px; margin: auto; border-radius: 8px; box-shadow: 0 0 10px #ccc; }
+input { width: 100%; padding: 10px; margin: 8px 0; border-radius: 5px; border: 1px solid #ccc; }
+button { width: 100%; padding: 10px; background: #007bff; color:#fff; border: none; border-radius: 5px; cursor: pointer; }
+button:hover { opacity:0.8; }
+#msg { margin-top: 10px; color: red; }
+.switch { color: blue; cursor: pointer; text-align: center; margin-top: 10px; }
+</style>
+</head>
+<body>
+
+<div class="box">
+    <h2 id="title">Đăng nhập</h2>
+
+    <input id="user" placeholder="Tài khoản">
+    <input id="pass" type="password" placeholder="Mật khẩu">
+
+    <button onclick="submitForm()">Tiếp tục</button>
+
+    <div id="msg"></div>
+
+    <div class="switch" onclick="toggleMode()">Chưa có tài khoản? Đăng ký</div>
+</div>
+
+<script>
+let mode = "login"; 
+
+function toggleMode() {
+    if (mode === "login") {
+        mode = "register";
+        document.getElementById("title").innerText = "Đăng ký";
+        document.querySelector(".switch").innerText = "Đã có tài khoản? Đăng nhập";
+    } else {
+        mode = "login";
+        document.getElementById("title").innerText = "Đăng nhập";
+        document.querySelector(".switch").innerText = "Chưa có tài khoản? Đăng ký";
+    }
+}
+
+function submitForm() {
+    const user = document.getElementById("user").value;
+    const pass = document.getElementById("pass").value;
+
+    const url = (mode === "login")
+        ? "https://YOUR_INFINITYFREE_DOMAIN/login.php"
+        : "https://YOUR_INFINITYFREE_DOMAIN/register.php";
+
+    fetch(url, {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json",
+            "X-Requested-With": "XMLHttpRequest"
+        },
+        body: JSON.stringify({ user, pass })
+    })
+    .then(res => res.json())
+    .then(data => {
+        document.getElementById("msg").innerText = data.message;
+
+        if (data.status === "success" && mode === "login") {
+            window.location.href = "dashboard.html";
+        }
+    })
+    .catch(err => {
+        document.getElementById("msg").innerText = "Lỗi kết nối";
+    });
+}
+</script>
+
+</body>
+</html>
